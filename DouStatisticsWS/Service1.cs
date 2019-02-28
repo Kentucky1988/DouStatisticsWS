@@ -10,7 +10,7 @@ namespace DouStatisticsWS
     public partial class Service1 : ServiceBase
     {
         private Timer _timer;
-        public static readonly DateTime DateTimeStart = DateTime.Now;
+        public readonly DateTime DateTimeStart = DateTime.Now;
         public Service1()
         {
             InitializeComponent();
@@ -28,7 +28,7 @@ namespace DouStatisticsWS
 
         protected override void OnStop()
         {
-            //todo: увеличить время до 5 минут
+            //todo: удалить все запихи в файл кроме ошибок
         }
 
         public void SendRequest(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace DouStatisticsWS
                 bool successfulResponse = new TimerRequest(new ProviderDou()).Request();
 
                 if (successfulResponse) //записать успешный результат работы службы
-                    new SuccessLogger().SaveResultWorkingService();
+                    new SuccessLogger().SaveResultWorkingService(DateTimeStart);
 
                 Writer.WriteTextInFile("Stop request");
             }

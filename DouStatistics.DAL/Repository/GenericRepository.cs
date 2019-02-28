@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using DouStatistics.DAL.Interfaces;
@@ -7,18 +8,21 @@ namespace DouStatistics.DAL.Repository
 {
     public class GenericRepository<T> : IRepository<T> where T : class
     {
+        private DouStatisticsDbContext _context;
+        private readonly DbSet<T> _dB;
+
+        public GenericRepository()
+        {
+            _context = new DouStatisticsDbContext();
+            _dB = _context.Set<T>();
+        }
         ///<summary>
         /// Сохранить елемент в БД
         ///</summary>
         public void Create(T model)
         {
-            using (var context = new DouStatisticsDbContext())
-            {
-                DbSet<T> dB = context.Set<T>();
-
-                dB.Add(model);
-                context.SaveChanges();
-            }
+            _dB.Add(model);
+            _context.SaveChanges();
         }
 
         ///<summary>
@@ -26,12 +30,7 @@ namespace DouStatistics.DAL.Repository
         ///</summary>
         public List<T> GetAll()
         {
-            using (var context = new DouStatisticsDbContext())
-            {
-                DbSet<T> dB = context.Set<T>();
-
-                return dB.AsNoTracking().ToList();
-            }
+            return _dB.AsNoTracking().ToList();
         }
 
         ///<summary>
@@ -39,12 +38,7 @@ namespace DouStatistics.DAL.Repository
         ///</summary>
         public T Get(int id)
         {
-            using (var context = new DouStatisticsDbContext())
-            {
-                DbSet<T> dB = context.Set<T>();
-
-                return dB.Find(id);
-            }
+            return _dB.Find(id);
         }
 
         ///<summary>
@@ -52,11 +46,8 @@ namespace DouStatistics.DAL.Repository
         ///</summary>
         public void Update(T model)
         {
-            using (var context = new DouStatisticsDbContext())
-            {
-                context.Entry(model).State = EntityState.Modified;
-                context.SaveChanges();
-            }
+            _context.Entry(model).State = EntityState.Modified;
+            _context.SaveChanges();
         }
 
         ///<summary>
@@ -64,13 +55,25 @@ namespace DouStatistics.DAL.Repository
         ///</summary>
         public void Delete(T model)
         {
-            using (var context = new DouStatisticsDbContext())
-            {
-                DbSet<T> dB = context.Set<T>();
+            _dB.Remove(model);
+            _context.SaveChanges();
+        }
 
-                dB.Remove(model);
-                context.SaveChanges();
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_context != null)
+                {
+                    _context.Dispose();
+                    _context = null;
+                }
             }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

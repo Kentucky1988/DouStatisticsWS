@@ -9,14 +9,14 @@ namespace DouStatisticsWS.Loger
         /// <summary>
         /// Записать результат работы службы, после успешной обработки всех запросов
         /// </summary>
-        public void SaveResultWorkingService()
+        public void SaveResultWorkingService(DateTime dateTimeStart)
         {
             var timeWork = TimeSpan.FromMilliseconds(TimerRequest.TimeExecutionRequests.ElapsedMilliseconds)
                                    .TotalSeconds;
 
             var workingService = new WorkService
             {
-                StartTime = Service1.DateTimeStart,
+                StartTime = dateTimeStart,
                 StopTime = DateTime.Now,
                 NumberRequests = TimerRequest.Index,
                 TimeExecutionRequests = (int)timeWork
