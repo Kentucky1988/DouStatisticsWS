@@ -1,6 +1,6 @@
 ﻿using System;
 using DouStatistics.DAL;
-using DouStatistics.LogicTests.Interfaces;
+using DouStatistics.Logic.Interfaces;
 
 namespace DouStatistics.Logic.Providers
 {
@@ -9,7 +9,7 @@ namespace DouStatistics.Logic.Providers
     /// </summary>
     public class ProviderTest : IProvider
     {
-        private int key = 0;
+        private int _key = 0;
 
         /// <summary>
         ///  Симулирует ответ провайдера. Генерит ошибку на каждом 40 запросе
@@ -18,14 +18,14 @@ namespace DouStatistics.Logic.Providers
         /// <returns></returns>
         public ResultsSearch NumberOfVacancies(KeyWords keyWord)
         {
-            key++;
+            _key++;
 
-            if (key % 40 == 0) //имитация ошибки подключения
+            if (_key % 40 == 0) //имитация ошибки подключения
                 throw new Exception("Ошибка подключения");
 
             var reqModel = new ResultsSearch
             {
-                Amount = key,
+                Amount = _key,
                 Date = DateTime.Now,
                 Id = keyWord.Id
             };

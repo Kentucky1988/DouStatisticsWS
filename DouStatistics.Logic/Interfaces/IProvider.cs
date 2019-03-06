@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using DouStatistics.DAL;
+﻿using DouStatistics.DAL;
 
-namespace DouStatistics.LogicTests.Interfaces
+namespace DouStatistics.Logic.Interfaces
 {
     public interface IProvider
     {

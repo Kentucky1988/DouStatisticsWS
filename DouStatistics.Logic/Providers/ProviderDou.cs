@@ -3,9 +3,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DouStatistics.DAL;
-using DouStatistics.Logic.DTO;
 using DouStatistics.Logic.Helpers;
-using DouStatistics.LogicTests.Interfaces;
+using DouStatistics.Logic.Interfaces;
 
 namespace DouStatistics.Logic.Providers
 {

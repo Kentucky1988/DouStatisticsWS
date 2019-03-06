@@ -6,7 +6,7 @@ namespace DouStatisticsWS.Loger
 {
     public class ErrorLogger
     {
-        public void SaveException(Exception exception, int? keyWordId = null)
+        public static void SaveException(Exception exception, int? keyWordId = null)
         {
             var logException = new LogException
             {

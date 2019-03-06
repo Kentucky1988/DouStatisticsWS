@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using DouStatistics.DAL;
 using DouStatistics.Logic.DTO;
-using DouStatistics.LogicTests.Interfaces;
+using DouStatistics.Logic.Interfaces;
 using DouStatisticsWS.Loger;
 
 namespace DouStatisticsWS
@@ -22,15 +22,16 @@ namespace DouStatisticsWS
             Index = 0;
             _provider = provider;
             TimeExecutionRequests = new Stopwatch();
-            SearchKeywords = new SearchKeywordsDto().GetAll();
         }
 
         public bool Request()
         {
             try
             {
-                var saveResuly = new SearchResultDTO();
+                var searchKeywords = new SearchKeywordsDto().GetAll();
+                SearchKeywords.AddRange(searchKeywords);
 
+                var saveResuly = new SearchResultDTO();
 
                 foreach (var keyword in SearchKeywords.ToList())
                 {
@@ -50,23 +51,24 @@ namespace DouStatisticsWS
                         }
                         catch (Exception e)
                         {
-                            new ErrorLogger().SaveException(e, keyword.Id);
+                            ErrorLogger.SaveException(e, keyword.Id);
 
                             Writer.WriteTextInFile($"Error {e.Message}\n inerMesage {e.InnerException?.Message}\n {e.StackTrace}");
                             Thread.Sleep(TimeSpan.FromMinutes(1));
                         }
                     }
                 }
+
+                return true;
             }
             catch (Exception exception)
             {
-                new ErrorLogger().SaveException(exception);
+                ErrorLogger.SaveException(exception);
                 Writer.WriteTextInFile($"{exception.Message}\n {exception.InnerException}\n {exception.StackTrace}");
             }
 
             TimeExecutionRequests.Stop();
-
-            return true;
+            return false;
         }
     }
 }

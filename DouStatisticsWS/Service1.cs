@@ -10,9 +10,13 @@ namespace DouStatisticsWS
     public partial class Service1 : ServiceBase
     {
         private Timer _timer;
-        public readonly DateTime DateTimeStart = DateTime.Now;
+        private readonly DateTime _dateTimeStart;
+        private DateTime _daterLastRecord;
+
         public Service1()
         {
+            _daterLastRecord = new SearchResultDTO().GetLastRecordDate().Date;
+            _dateTimeStart = DateTime.Now;
             InitializeComponent();
         }
 
@@ -43,14 +47,11 @@ namespace DouStatisticsWS
         {
             try
             {
-                Writer.WriteTextInFile("Start cycle");
+                var dateNow = DateTime.Now.Date;
 
-                var dayLastRecord = new SearchResultDTO().GetLastRecordDate().Day;
-                var dayNow = DateTime.Now.Day;
+                Writer.WriteTextInFile($"Последняя запись {_daterLastRecord}, текущая дата {dateNow}, длинна масива {TimerRequest.SearchKeywords.Count}");
 
-                Writer.WriteTextInFile($"последняя запись {dayLastRecord}, текущая дата {dayNow}, длинна масива {TimerRequest.SearchKeywords.Count}");
-
-                if (dayLastRecord == dayNow)
+                if (dateNow == _daterLastRecord)
                     return;
 
                 Writer.WriteTextInFile("нет текущей даты");
@@ -60,15 +61,17 @@ namespace DouStatisticsWS
 
                 bool successfulResponse = new TimerRequest(new ProviderDou()).Request();
 
-                if (successfulResponse) //записать успешный результат работы службы
-                    new SuccessLogger().SaveResultWorkingService(DateTimeStart);
+                if (successfulResponse)
+                { //записать успешный результат работы службы
+                    SuccessLogger.SaveResultWorkingService(_dateTimeStart);
+                    _daterLastRecord = new SearchResultDTO().GetLastRecordDate().Date;
+                }
 
                 Writer.WriteTextInFile("Stop request");
             }
             catch (Exception e)
             {
-                new ErrorLogger().SaveException(e);
-
+                ErrorLogger.SaveException(e);
                 Writer.WriteTextInFile($"Error {e.Message}\n inerMesage {e.InnerException?.Message}\n {e.StackTrace}");
             }
         }
