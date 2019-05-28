@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using DouStatistics.DAL;
+using DouStatistics.DAL.Interfaces;
 using DouStatistics.DAL.Repository;
 
 namespace DouStatistics.Logic.DTO
 {
     public class SearchResultDTO
     {
-        private GenericRepository<ResultsSearch> _dB;
+        private readonly IRepository<ResultsSearch> _dB;
 
-        public SearchResultDTO()
+        public SearchResultDTO(DbContext dbContext)
         {
-            _dB = new GenericRepository<ResultsSearch>();
+            _dB = new GenericRepository<ResultsSearch>(dbContext);
         }
 
         ///<summary>
@@ -31,24 +33,9 @@ namespace DouStatistics.Logic.DTO
             return _dB.GetAll();
         }
 
-        ///<summary>
-        /// Удалить все записи из таблицы
-        ///</summary>
-        public void DeleteAll()
-        {
-            var table = _dB.GetAll();
-
-            foreach (var record in table)
-            {
-                var rec = _dB.Get(record.Id);
-                _dB.Delete(rec);
-            }
-        }
-
-        /// <summary>
+       /// <summary>
         /// Получить дату последней записи в таблице Search_results
         /// </summary>
-        /// <returns></returns>
         public DateTime GetLastRecordDate()
         {
             return _dB.GetAll().Max(c => (DateTime?)c.Date) ?? default(DateTime);

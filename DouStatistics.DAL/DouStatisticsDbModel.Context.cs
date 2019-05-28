@@ -27,7 +27,7 @@ namespace DouStatistics.DAL
     
         public virtual DbSet<KeyWords> KeyWords { get; set; }
         public virtual DbSet<LogException> LogException { get; set; }
-        public virtual DbSet<ResultsSearch> ResultsSearch { get; set; }
         public virtual DbSet<WorkService> WorkService { get; set; }
+        public virtual DbSet<ResultsSearch> ResultsSearch { get; set; }
     }
 }

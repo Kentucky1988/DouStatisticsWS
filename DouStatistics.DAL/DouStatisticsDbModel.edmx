@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище DouStatisticsDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище DouStatisticsDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="KeyWords">
           <Key>
             <PropertyRef Name="Id" />
@@ -65,8 +65,7 @@
             <End Role="ResultsSearch" EntitySet="ResultsSearch" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="DouStatisticsDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -77,7 +76,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="KeyWord" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IsCategory" Type="Boolean" />
-          <NavigationProperty Name="ResultsSearch" Relationship="Self.FK__ResultsSe__KeyWo__4BAC3F29" FromRole="KeyWords" ToRole="ResultsSearch" />
+          <NavigationProperty Name="ResultsSearch" Relationship="DouStatisticsDbModel.FK__ResultsSe__KeyWo__4BAC3F29" FromRole="KeyWords" ToRole="ResultsSearch" />
         </EntityType>
         <EntityType Name="LogException">
           <Key>
@@ -90,16 +89,6 @@
           <Property Name="StackTraceException" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
-        <EntityType Name="ResultsSearch">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="KeyWordId" Type="Int32" Nullable="false" />
-          <Property Name="Amount" Type="Int32" Nullable="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="KeyWords" Relationship="Self.FK__ResultsSe__KeyWo__4BAC3F29" FromRole="ResultsSearch" ToRole="KeyWords" />
-        </EntityType>
         <EntityType Name="WorkService">
           <Key>
             <PropertyRef Name="Id" />
@@ -110,9 +99,29 @@
           <Property Name="TimeExecutionRequests" Type="Int32" Nullable="false" />
           <Property Name="NumberRequests" Type="Int32" Nullable="false" />
         </EntityType>
+        <EntityContainer Name="DouStatisticsDbContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="KeyWords" EntityType="Self.KeyWords" />
+          <EntitySet Name="LogException" EntityType="Self.LogException" />
+          <EntitySet Name="WorkService" EntityType="Self.WorkService" />
+          <EntitySet Name="ResultsSearch" EntityType="DouStatisticsDbModel.ResultsSearch" />
+          <AssociationSet Name="FK__ResultsSe__KeyWo__4BAC3F29" Association="DouStatisticsDbModel.FK__ResultsSe__KeyWo__4BAC3F29">
+            <End Role="KeyWords" EntitySet="KeyWords" />
+            <End Role="ResultsSearch" EntitySet="ResultsSearch" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="ResultsSearch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KeyWordId" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Int32" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="KeyWords" Relationship="DouStatisticsDbModel.FK__ResultsSe__KeyWo__4BAC3F29" FromRole="ResultsSearch" ToRole="KeyWords" />
+        </EntityType>
         <Association Name="FK__ResultsSe__KeyWo__4BAC3F29">
-          <End Role="KeyWords" Type="Self.KeyWords" Multiplicity="1" />
-          <End Role="ResultsSearch" Type="Self.ResultsSearch" Multiplicity="*" />
+          <End Type="DouStatisticsDbModel.KeyWords" Role="KeyWords" Multiplicity="1" />
+          <End Type="DouStatisticsDbModel.ResultsSearch" Role="ResultsSearch" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KeyWords">
               <PropertyRef Name="Id" />
@@ -122,22 +131,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="DouStatisticsDbContext2" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="KeyWords" EntityType="Self.KeyWords" />
-          <EntitySet Name="LogException" EntityType="Self.LogException" />
-          <EntitySet Name="ResultsSearch" EntityType="Self.ResultsSearch" />
-          <EntitySet Name="WorkService" EntityType="Self.WorkService" />
-          <AssociationSet Name="FK__ResultsSe__KeyWo__4BAC3F29" Association="Self.FK__ResultsSe__KeyWo__4BAC3F29">
-            <End Role="KeyWords" EntitySet="KeyWords" />
-            <End Role="ResultsSearch" EntitySet="ResultsSearch" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Хранилище DouStatisticsDbModelContainer" CdmEntityContainer="DouStatisticsDbContext2">
+        <EntityContainerMapping StorageEntityContainer="Хранилище DouStatisticsDbModelContainer" CdmEntityContainer="DouStatisticsDbContext">
           <EntitySetMapping Name="KeyWords">
             <EntityTypeMapping TypeName="DouStatisticsDbModel.KeyWords">
               <MappingFragment StoreEntitySet="KeyWords">
@@ -159,16 +158,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ResultsSearch">
-            <EntityTypeMapping TypeName="DouStatisticsDbModel.ResultsSearch">
-              <MappingFragment StoreEntitySet="ResultsSearch">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="KeyWordId" ColumnName="KeyWordId" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="WorkService">
             <EntityTypeMapping TypeName="DouStatisticsDbModel.WorkService">
               <MappingFragment StoreEntitySet="WorkService">
@@ -177,6 +166,16 @@
                 <ScalarProperty Name="StopTime" ColumnName="StopTime" />
                 <ScalarProperty Name="TimeExecutionRequests" ColumnName="TimeExecutionRequests" />
                 <ScalarProperty Name="NumberRequests" ColumnName="NumberRequests" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ResultsSearch">
+            <EntityTypeMapping TypeName="DouStatisticsDbModel.ResultsSearch">
+              <MappingFragment StoreEntitySet="ResultsSearch">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="KeyWordId" ColumnName="KeyWordId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

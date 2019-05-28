@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data.Entity;
 using System.ServiceProcess;
 using System.Timers;
+using DouStatistics.DAL;
 using DouStatistics.Logic.DTO;
+using DouStatistics.Logic.Interfaces;
 using DouStatistics.Logic.Providers;
 using DouStatisticsWS.Loger;
 
@@ -11,14 +14,30 @@ namespace DouStatisticsWS
     {
         private Timer _timer;
         private readonly DateTime _dateTimeStart;
-        private DateTime _daterLastRecord;
+        private DateTime? _daterLastRecord;
+        private readonly DbContext _dbContext;
+        private readonly IProvider _provider;
+
+        public DateTime DaterLastRecord
+        {
+            set => _daterLastRecord = value;   
+            get => (DateTime)(_daterLastRecord
+                ?? (_daterLastRecord = new SearchResultDTO(_dbContext).GetLastRecordDate().Date));
+        }
 
         public Service1()
         {
-            _daterLastRecord = new SearchResultDTO().GetLastRecordDate().Date;
             _dateTimeStart = DateTime.Now;
+            _dbContext = new DouStatisticsDbContext();
+            _provider = new ProviderTest();
+
             InitializeComponent();
         }
+
+        //public void OnStaryDebug()
+        //{
+        //    OnStart(null);
+        //}
 
         protected override void OnStart(string[] args)
         {
@@ -32,7 +51,7 @@ namespace DouStatisticsWS
 
         protected override void OnStop()
         {
-            //todo: удалить все запихи в файл кроме ошибок
+            //todo: удалить все записи в файл кроме ошибок
         }
 
         public void SendRequest(object sender, EventArgs e)
@@ -49,29 +68,29 @@ namespace DouStatisticsWS
             {
                 var dateNow = DateTime.Now.Date;
 
-                Writer.WriteTextInFile($"Последняя запись {_daterLastRecord}, текущая дата {dateNow}, длинна масива {TimerRequest.SearchKeywords.Count}");
+                Writer.WriteTextInFile($"Последняя запись {DaterLastRecord}, текущая дата {dateNow}, длинна масива {TimerRequest.SearchKeywords.Count}");
 
-                if (dateNow == _daterLastRecord)
+                if (dateNow == DaterLastRecord)
                     return;
 
-                Writer.WriteTextInFile("нет текущей даты");
+                Writer.WriteTextInFile("Нет текущей даты");
 
                 if (TimerRequest.SearchKeywords.Count > 0)
                     TimerRequest.SearchKeywords.Clear();
 
-                bool successfulResponse = new TimerRequest(new ProviderDou()).Request();
+                bool successfulResponse = new TimerRequest(_provider, _dbContext).Request();
 
                 if (successfulResponse)
                 { //записать успешный результат работы службы
-                    SuccessLogger.SaveResultWorkingService(_dateTimeStart);
-                    _daterLastRecord = new SearchResultDTO().GetLastRecordDate().Date;
+                    new SuccessLogger(_dbContext).SaveResultWorkingService(_dateTimeStart);
+                    DaterLastRecord = new SearchResultDTO(_dbContext).GetLastRecordDate().Date;
                 }
 
                 Writer.WriteTextInFile("Stop request");
             }
             catch (Exception e)
             {
-                ErrorLogger.SaveException(e);
+                new ErrorLogger(_dbContext).SaveException(e);
                 Writer.WriteTextInFile($"Error {e.Message}\n inerMesage {e.InnerException?.Message}\n {e.StackTrace}");
             }
         }

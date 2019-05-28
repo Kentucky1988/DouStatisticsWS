@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Data.Entity;
 using DouStatistics.DAL;
 
 namespace DouStatistics.Logic.DTO.Tests
@@ -7,10 +8,17 @@ namespace DouStatistics.Logic.DTO.Tests
     [TestClass()]
     public class LogExceptionDTOTests
     {
+        private DbContext _dbContext;
+        [ClassInitialize]
+        public void TestInitialize()
+        {
+            _dbContext = new DouStatisticsDbContext();
+        }
+
         [TestMethod()]
         public void SaveErrorTest()
         {
-            var logException = new LogExceptionDTO();
+            var logException = new LogExceptionDTO(_dbContext);
             int countExceptionStart = logException.GetAlLogExceptions().Count;
             
             var exception = new LogException

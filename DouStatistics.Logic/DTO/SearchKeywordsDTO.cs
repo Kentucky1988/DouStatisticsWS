@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using DouStatistics.DAL;
+using DouStatistics.DAL.Interfaces;
 using DouStatistics.DAL.Repository;
 
 namespace DouStatistics.Logic.DTO
 {
     public class SearchKeywordsDto
     {
-        private GenericRepository<KeyWords> _dB;
+        private readonly IRepository<KeyWords> _dB;
 
-        public SearchKeywordsDto()
+        public SearchKeywordsDto(DbContext dbContext)
         {
-            _dB = new GenericRepository<KeyWords>();
+            _dB = new GenericRepository<KeyWords>(dbContext);
         }
 
         ///<summary>

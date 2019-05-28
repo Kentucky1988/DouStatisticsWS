@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using DouStatistics.DAL;
+using DouStatistics.DAL.Interfaces;
 using DouStatistics.DAL.Repository;
 
 namespace DouStatistics.Logic.DTO
 {
     public class LogExceptionDTO
     {
-        private readonly GenericRepository<LogException> _dB;
+        private readonly IRepository<LogException> _dB;
 
-        public LogExceptionDTO()
+        public LogExceptionDTO(DbContext dbContext)
         {
-            _dB = new GenericRepository<LogException>();
+            _dB = new GenericRepository<LogException>(dbContext);
         }
 
         public List<LogException> GetAlLogExceptions()

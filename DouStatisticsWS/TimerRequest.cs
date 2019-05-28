@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -16,11 +17,13 @@ namespace DouStatisticsWS
         public static int Index;
         public static Stopwatch TimeExecutionRequests;
         public static List<KeyWords> SearchKeywords = new List<KeyWords>();
+        private readonly DbContext _dbContext;
 
-        public TimerRequest(IProvider provider)
+        public TimerRequest(IProvider provider, DbContext dbContext)
         {
             Index = 0;
             _provider = provider;
+            _dbContext = dbContext;
             TimeExecutionRequests = new Stopwatch();
         }
 
@@ -28,10 +31,12 @@ namespace DouStatisticsWS
         {
             try
             {
-                var searchKeywords = new SearchKeywordsDto().GetAll();
+                Writer.WriteTextInFile("Start request");
+
+                var searchKeywords = new SearchKeywordsDto(_dbContext).GetAll();
                 SearchKeywords.AddRange(searchKeywords);
 
-                var saveResuly = new SearchResultDTO();
+                var saveResuly = new SearchResultDTO(_dbContext);
 
                 foreach (var keyword in SearchKeywords.ToList())
                 {
@@ -51,7 +56,7 @@ namespace DouStatisticsWS
                         }
                         catch (Exception e)
                         {
-                            ErrorLogger.SaveException(e, keyword.Id);
+                            new ErrorLogger(_dbContext).SaveException(e, keyword.Id);
 
                             Writer.WriteTextInFile($"Error {e.Message}\n inerMesage {e.InnerException?.Message}\n {e.StackTrace}");
                             Thread.Sleep(TimeSpan.FromMinutes(1));
@@ -59,11 +64,13 @@ namespace DouStatisticsWS
                     }
                 }
 
+                Writer.WriteTextInFile($"Выполненно {Index} запроса");
+
                 return true;
             }
             catch (Exception exception)
             {
-                ErrorLogger.SaveException(exception);
+                new ErrorLogger(_dbContext).SaveException(exception);
                 Writer.WriteTextInFile($"{exception.Message}\n {exception.InnerException}\n {exception.StackTrace}");
             }
 

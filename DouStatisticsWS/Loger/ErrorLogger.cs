@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using DouStatistics.DAL;
 using DouStatistics.Logic.DTO;
 
@@ -6,7 +7,12 @@ namespace DouStatisticsWS.Loger
 {
     public class ErrorLogger
     {
-        public static void SaveException(Exception exception, int? keyWordId = null)
+        private readonly DbContext _dbContext;
+        public ErrorLogger(DbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        public void SaveException(Exception exception, int? keyWordId = null)
         {
             var logException = new LogException
             {
@@ -17,7 +23,7 @@ namespace DouStatisticsWS.Loger
                 Date = DateTime.Now
             };
 
-            new LogExceptionDTO().SaveError(logException);
+            new LogExceptionDTO(_dbContext).SaveError(logException);
         }
     }
 }

@@ -8,12 +8,12 @@ namespace DouStatistics.DAL.Repository
 {
     public class GenericRepository<T> : IRepository<T> where T : class
     {
-        private DouStatisticsDbContext _context;
+        private DbContext _context;
         private readonly DbSet<T> _dB;
 
-        public GenericRepository()
+        public GenericRepository(DbContext context)
         {
-            _context = new DouStatisticsDbContext();
+            _context = context;
             _dB = _context.Set<T>();
         }
         ///<summary>

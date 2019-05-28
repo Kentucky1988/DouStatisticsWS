@@ -9,13 +9,13 @@ namespace DouStatisticsWS
 
         public static void WriteTextInFile(string operation)
         {
-            string path = @"C:\Users\lulch\OneDrive\Рабочий стол\timer.txt";
+            string path = @"C:\Users\Дмитрий\Desktop\timer.txt";
 
             lock (_locker)
             {
                 using (var tw = new StreamWriter(path, File.Exists(path)))
                 {
-                    tw.WriteLine($"{operation} {DateTime.Now :hh:mm:ss}");
+                    tw.WriteLine($"{operation} {DateTime.Now:hh:mm:ss}");
                 }
             }
         }

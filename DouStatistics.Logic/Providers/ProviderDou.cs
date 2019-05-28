@@ -15,7 +15,6 @@ namespace DouStatistics.Logic.Providers
         /// Выполнить Http запрос
         /// </summary>
         /// <param name="url">адрес по которому необходимо выполнить запрос</param>
-        /// <returns></returns>
         public async Task<string> HttpRequest(string url)
         {
             if (string.IsNullOrEmpty(url))
