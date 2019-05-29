@@ -15,6 +15,11 @@ namespace DouStatistics.Logic.DTO
             _dB = new GenericRepository<LogException>(dbContext);
         }
 
+        public LogExceptionDTO(IRepository<LogException> dB)
+        {
+            _dB = dB;
+        }
+
         public List<LogException> GetAlLogExceptions()
         {
             return _dB.GetAll();
