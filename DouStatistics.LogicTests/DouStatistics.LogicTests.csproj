@@ -77,7 +77,8 @@
   <ItemGroup>
     <Compile Include="DTO\KeyWordsDtoTests.cs" />
     <Compile Include="DTO\LogExceptionDTOTests.cs" />
-    <Compile Include="DTO\ResultsSearchDtoTests.cs" />
+    <Compile Include="DTO\SearchResultDTOTests.cs" />
+    <Compile Include="DTO\StubObject\ResultsSearchStubRepository.cs" />
     <Compile Include="Helpers\HtmlHelperTests.cs" />
     <Compile Include="Helpers\StringHelperTests.cs" />
     <Compile Include="Helpers\UrlHelperTests.cs" />

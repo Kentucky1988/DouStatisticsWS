@@ -7,17 +7,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DouStatistics.LogicTests.DTO
 {
-    [TestClass()]
+    [TestClass]
     public class KeyWordsDtoTests
     {
         private DbContext _dbContext;
-        [ClassInitialize]
+        [TestInitialize]
         public void TestInitialize()
         {
             _dbContext = new DouStatisticsDbContext();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void GetAllAsyncTest()
         {
             string keyName = ".NET";

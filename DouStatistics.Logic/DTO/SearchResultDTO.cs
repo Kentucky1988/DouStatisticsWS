@@ -17,6 +17,11 @@ namespace DouStatistics.Logic.DTO
             _dB = new GenericRepository<ResultsSearch>(dbContext);
         }
 
+        public SearchResultDTO(IRepository<ResultsSearch> db)
+        {
+            _dB = db;
+        }
+
         ///<summary>
         /// Сохранить результат поиска
         ///</summary>
@@ -38,7 +43,7 @@ namespace DouStatistics.Logic.DTO
         /// </summary>
         public DateTime GetLastRecordDate()
         {
-            return _dB.GetAll().Max(c => (DateTime?)c.Date) ?? default(DateTime);
+            return _dB.GetAll().Max(c => c.Date);
         }
     }
 }
